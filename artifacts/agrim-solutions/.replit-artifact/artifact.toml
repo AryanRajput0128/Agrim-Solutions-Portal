@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "Agrim Solutions"
+version = "1.0.0"
+id = "artifacts/agrim-solutions"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 19539
+
+[services.development]
+run = "pnpm --filter @workspace/agrim-solutions run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/agrim-solutions", "run", "build" ]
+publicDir = "artifacts/agrim-solutions/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "19539"
+BASE_PATH = "/"

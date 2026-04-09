@@ -1,0 +1,14 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "uAZsVDqDaBSppL4nKcz_g"
+uri = "file://artifacts/agrim-solutions/public/images/hero.png"
+type = "image"
+title = "Hero background for office"
+
+[[generated]]
+id = "ii8JQElCBNPMRS0Fnt1bM"
+uri = "file://artifacts/agrim-solutions/public/images/about.png"
+type = "image"
+title = "Property document with stamp"
