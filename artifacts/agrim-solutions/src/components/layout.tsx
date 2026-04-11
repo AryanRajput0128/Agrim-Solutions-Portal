@@ -21,16 +21,16 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <div className="flex items-center space-x-6">
           <div className="flex items-center">
             <Phone className="h-4 w-4 mr-2 opacity-80" />
-            <span>+91 98765 43210</span>
+            <span>+91 91315 27745</span>
           </div>
           <div className="flex items-center">
             <Mail className="h-4 w-4 mr-2 opacity-80" />
-            <span>contact@agrimsolutions.in</span>
+            <span>solutionsagrim@gmail.com</span>
           </div>
         </div>
         <div className="flex items-center">
           <MapPin className="h-4 w-4 mr-2 opacity-80" />
-          <span>New Delhi, India</span>
+          <span>Biaora, Rajgarh, Madhya Pradesh</span>
         </div>
       </div>
 
@@ -157,11 +157,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
               <ul className="space-y-3 text-primary-foreground/80 text-sm">
                 <li className="flex items-start">
                   <MapPin className="h-5 w-5 mr-3 text-secondary shrink-0" />
-                  <span>123 Registration Enclave,<br />Sector 4, New Delhi<br />110001, India</span>
+                  <span>Akbar Building, Ground Floor,<br />Biaora, Rajgarh 465674<br />Madhya Pradesh</span>
                 </li>
                 <li className="flex items-center">
                   <Phone className="h-5 w-5 mr-3 text-secondary shrink-0" />
-                  <span>+91 98765 43210</span>
+                  <span>+91 91315 27745</span>
                 </li>
               </ul>
             </div>

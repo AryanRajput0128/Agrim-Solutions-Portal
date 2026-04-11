@@ -24,9 +24,9 @@ export default function BookAppointment() {
                   <div>
                     <p className="font-semibold text-foreground">Agrim Solutions HQ</p>
                     <p className="text-muted-foreground text-sm leading-relaxed">
-                      123 Registration Enclave,<br />
-                      Sector 4, New Delhi<br />
-                      110001, India
+                      Akbar Building, Ground Floor,<br />
+                      Biaora, Rajgarh 465674<br />
+                      Madhya Pradesh
                     </p>
                   </div>
                 </div>
@@ -48,7 +48,8 @@ export default function BookAppointment() {
                   <div>
                     <p className="font-semibold text-foreground">Contact</p>
                     <p className="text-muted-foreground text-sm">
-                      +91 98765 43210
+                      +91 91315 27745<br />
+                      +91 98935 88175
                     </p>
                   </div>
                 </div>
@@ -58,7 +59,7 @@ export default function BookAppointment() {
                   <div>
                     <p className="font-semibold text-foreground">Email</p>
                     <p className="text-muted-foreground text-sm">
-                      appointments@agrimsolutions.in
+                      solutionsagrim@gmail.com
                     </p>
                   </div>
                 </div>

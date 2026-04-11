@@ -30,9 +30,9 @@ export default function Contact() {
                     <div>
                       <h3 className="font-bold text-foreground">Visit Us</h3>
                       <p className="text-muted-foreground mt-1">
-                        123 Registration Enclave,<br />
-                        Sector 4, New Delhi<br />
-                        110001, India
+                        Akbar Building, Ground Floor,<br />
+                        Biaora, Rajgarh 465674<br />
+                        Madhya Pradesh
                       </p>
                     </div>
                   </div>
@@ -44,8 +44,8 @@ export default function Contact() {
                     <div>
                       <h3 className="font-bold text-foreground">Call Us</h3>
                       <p className="text-muted-foreground mt-1">
-                        +91 98765 43210<br />
-                        +91 11 2345 6789
+                        +91 91315 27745<br />
+                        +91 98935 88175
                       </p>
                     </div>
                   </div>
@@ -57,8 +57,7 @@ export default function Contact() {
                     <div>
                       <h3 className="font-bold text-foreground">Email Us</h3>
                       <p className="text-muted-foreground mt-1">
-                        contact@agrimsolutions.in<br />
-                        support@agrimsolutions.in
+                        solutionsagrim@gmail.com
                       </p>
                     </div>
                   </div>
