@@ -1,6 +1,20 @@
 import { useListAppointments, useGetAppointmentStats } from "@workspace/api-client-react";
 import { useState } from "react";
-import { Phone, Mail, Calendar, FileText, Users, Clock, CheckCircle2, XCircle, AlertCircle, Search } from "lucide-react";
+import {
+  Phone, Mail, Calendar, FileText, Users, Clock,
+  CheckCircle2, XCircle, AlertCircle, Search, X, ChevronRight
+} from "lucide-react";
+
+type Appointment = {
+  id: number;
+  name: string;
+  phone: string;
+  email: string;
+  query: string;
+  serviceType: string;
+  status: string;
+  createdAt: string;
+};
 
 const STATUS_COLORS: Record<string, string> = {
   pending: "bg-yellow-100 text-yellow-800 border-yellow-200",
@@ -10,10 +24,10 @@ const STATUS_COLORS: Record<string, string> = {
 };
 
 const STATUS_ICONS: Record<string, React.ReactNode> = {
-  pending: <Clock className="w-3 h-3" />,
-  confirmed: <AlertCircle className="w-3 h-3" />,
-  completed: <CheckCircle2 className="w-3 h-3" />,
-  cancelled: <XCircle className="w-3 h-3" />,
+  pending: <Clock className="w-3.5 h-3.5" />,
+  confirmed: <AlertCircle className="w-3.5 h-3.5" />,
+  completed: <CheckCircle2 className="w-3.5 h-3.5" />,
+  cancelled: <XCircle className="w-3.5 h-3.5" />,
 };
 
 function formatDate(iso: string) {
@@ -26,11 +40,118 @@ function formatDate(iso: string) {
   });
 }
 
+function AppointmentModal({ appt, onClose }: { appt: Appointment; onClose: () => void }) {
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      onClick={onClose}
+    >
+      {/* Backdrop */}
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
+
+      {/* Panel */}
+      <div
+        className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-200"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="bg-primary text-primary-foreground px-6 py-5 rounded-t-2xl flex items-start justify-between gap-4">
+          <div>
+            <p className="text-primary-foreground/60 text-xs font-medium uppercase tracking-widest mb-1">Appointment #{appt.id}</p>
+            <h2 className="text-xl font-serif font-bold">{appt.name}</h2>
+          </div>
+          <button
+            onClick={onClose}
+            className="mt-1 p-1.5 rounded-lg hover:bg-white/10 transition-colors shrink-0"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        <div className="px-6 py-6 space-y-5">
+          {/* Status */}
+          <div className="flex items-center gap-3">
+            <span className={`inline-flex items-center gap-1.5 text-sm font-semibold px-3 py-1.5 rounded-full border ${STATUS_COLORS[appt.status] ?? ""}`}>
+              {STATUS_ICONS[appt.status]}
+              {appt.status.charAt(0).toUpperCase() + appt.status.slice(1)}
+            </span>
+            <span className="text-xs text-muted-foreground">{formatDate(appt.createdAt)}</span>
+          </div>
+
+          {/* Contact Details */}
+          <div className="bg-muted/40 rounded-xl p-4 space-y-3">
+            <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">Contact Information</h3>
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-secondary/10 rounded-full flex items-center justify-center shrink-0">
+                <Phone className="w-4 h-4 text-secondary" />
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Phone</p>
+                <a href={`tel:${appt.phone}`} className="font-semibold text-foreground hover:text-primary transition-colors">
+                  {appt.phone}
+                </a>
+              </div>
+            </div>
+            {appt.email && (
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-secondary/10 rounded-full flex items-center justify-center shrink-0">
+                  <Mail className="w-4 h-4 text-secondary" />
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground">Email</p>
+                  <a href={`mailto:${appt.email}`} className="font-semibold text-foreground hover:text-primary transition-colors break-all">
+                    {appt.email}
+                  </a>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Service */}
+          <div>
+            <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">Service Requested</h3>
+            <span className="inline-block bg-primary/8 text-primary text-sm font-semibold px-4 py-2 rounded-full border border-primary/15">
+              {appt.serviceType}
+            </span>
+          </div>
+
+          {/* Full Query */}
+          <div>
+            <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">Query / Work Details</h3>
+            <div className="bg-muted/30 border border-border rounded-xl p-4">
+              <p className="text-sm text-foreground leading-relaxed whitespace-pre-wrap">{appt.query}</p>
+            </div>
+          </div>
+
+          {/* Actions */}
+          <div className="flex gap-3 pt-2">
+            <a
+              href={`tel:${appt.phone}`}
+              className="flex-1 flex items-center justify-center gap-2 bg-primary text-primary-foreground font-semibold py-2.5 rounded-lg hover:bg-primary/90 transition-colors text-sm"
+            >
+              <Phone className="w-4 h-4" /> Call Now
+            </a>
+            {appt.email && (
+              <a
+                href={`mailto:${appt.email}`}
+                className="flex-1 flex items-center justify-center gap-2 bg-secondary text-secondary-foreground font-semibold py-2.5 rounded-lg hover:bg-secondary/90 transition-colors text-sm"
+              >
+                <Mail className="w-4 h-4" /> Send Email
+              </a>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function Admin() {
   const { data: appointments, isLoading, isError } = useListAppointments();
   const { data: stats } = useGetAppointmentStats();
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
+  const [selected, setSelected] = useState<Appointment | null>(null);
 
   const filtered = (appointments ?? []).filter((a) => {
     const matchSearch =
@@ -46,6 +167,11 @@ export default function Admin() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Modal */}
+      {selected && (
+        <AppointmentModal appt={selected} onClose={() => setSelected(null)} />
+      )}
+
       {/* Header */}
       <div className="bg-primary text-primary-foreground px-6 py-8">
         <div className="max-w-7xl mx-auto">
@@ -67,7 +193,7 @@ export default function Admin() {
             { label: "This Week", value: stats?.recentCount ?? 0, icon: <Calendar className="w-5 h-5" />, color: "text-purple-600" },
           ].map((s) => (
             <div key={s.label} className="bg-white rounded-xl border border-border p-4 shadow-sm flex flex-col gap-2">
-              <div className={`${s.color}`}>{s.icon}</div>
+              <div className={s.color}>{s.icon}</div>
               <div className="text-2xl font-bold text-foreground">{s.value}</div>
               <div className="text-xs text-muted-foreground font-medium uppercase tracking-wide">{s.label}</div>
             </div>
@@ -131,11 +257,16 @@ export default function Admin() {
                     <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wide">Query</th>
                     <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wide">Status</th>
                     <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wide">Submitted</th>
+                    <th className="px-6 py-3"></th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
                   {filtered.map((appt) => (
-                    <tr key={appt.id} className="hover:bg-muted/20 transition-colors">
+                    <tr
+                      key={appt.id}
+                      onClick={() => setSelected(appt)}
+                      className="hover:bg-primary/5 cursor-pointer transition-colors group"
+                    >
                       <td className="px-6 py-4 text-muted-foreground font-mono text-xs">{appt.id}</td>
                       <td className="px-6 py-4">
                         <div className="font-semibold text-foreground">{appt.name}</div>
@@ -144,12 +275,12 @@ export default function Admin() {
                         <div className="space-y-1">
                           <div className="flex items-center gap-1.5 text-foreground">
                             <Phone className="w-3.5 h-3.5 text-secondary shrink-0" />
-                            <a href={`tel:${appt.phone}`} className="hover:text-primary transition-colors">{appt.phone}</a>
+                            <span>{appt.phone}</span>
                           </div>
                           {appt.email && (
                             <div className="flex items-center gap-1.5 text-muted-foreground">
                               <Mail className="w-3.5 h-3.5 text-secondary shrink-0" />
-                              <a href={`mailto:${appt.email}`} className="hover:text-primary transition-colors truncate max-w-[180px]">{appt.email}</a>
+                              <span className="truncate max-w-[160px]">{appt.email}</span>
                             </div>
                           )}
                         </div>
@@ -160,7 +291,7 @@ export default function Admin() {
                         </span>
                       </td>
                       <td className="px-6 py-4 max-w-xs">
-                        <p className="text-muted-foreground text-xs leading-relaxed line-clamp-3">{appt.query}</p>
+                        <p className="text-muted-foreground text-xs leading-relaxed line-clamp-2">{appt.query}</p>
                       </td>
                       <td className="px-6 py-4">
                         <span className={`inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full border ${STATUS_COLORS[appt.status] ?? ""}`}>
@@ -170,6 +301,9 @@ export default function Admin() {
                       </td>
                       <td className="px-6 py-4 text-xs text-muted-foreground whitespace-nowrap">
                         {formatDate(appt.createdAt)}
+                      </td>
+                      <td className="px-6 py-4">
+                        <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
                       </td>
                     </tr>
                   ))}
