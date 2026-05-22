@@ -12,3 +12,6 @@ export * from "./appointmentStatus";
 export * from "./createAppointmentBody";
 export * from "./errorResponse";
 export * from "./healthStatus";
+export * from "./loginBody";
+export * from "./loginResponse";
+export * from "./verifyResponse";

@@ -15,4 +15,6 @@ export interface CreateAppointmentBody {
   /** @minLength 5 */
   query: string;
   serviceType: string;
+  preferredDate?: string;
+  preferredTime?: string;
 }

@@ -93,6 +93,8 @@ function apptToJson(appt: typeof appointmentsTable.$inferSelect) {
     query: appt.query,
     serviceType: appt.serviceType,
     status: appt.status,
+    preferredDate: appt.preferredDate ?? undefined,
+    preferredTime: appt.preferredTime ?? undefined,
     createdAt: appt.createdAt.toISOString(),
   };
 }

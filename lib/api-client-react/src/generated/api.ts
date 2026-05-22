@@ -22,6 +22,9 @@ import type {
   CreateAppointmentBody,
   ErrorResponse,
   HealthStatus,
+  LoginBody,
+  LoginResponse,
+  VerifyResponse,
 } from "./api.schemas";
 
 import { customFetch } from "../custom-fetch";
@@ -34,7 +37,6 @@ type Awaited<O> = O extends AwaitedInput<infer T> ? T : never;
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 /**
- * Returns server health status
  * @summary Health check
  */
 export const getHealthCheckUrl = () => {
@@ -110,7 +112,167 @@ export function useHealthCheck<
 }
 
 /**
- * Returns all submitted appointment bookings
+ * @summary Admin login
+ */
+export const getAdminLoginUrl = () => {
+  return `/api/auth/login`;
+};
+
+export const adminLogin = async (
+  loginBody: LoginBody,
+  options?: RequestInit,
+): Promise<LoginResponse> => {
+  return customFetch<LoginResponse>(getAdminLoginUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(loginBody),
+  });
+};
+
+export const getAdminLoginMutationOptions = <
+  TError = ErrorType<ErrorResponse>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof adminLogin>>,
+    TError,
+    { data: BodyType<LoginBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof adminLogin>>,
+  TError,
+  { data: BodyType<LoginBody> },
+  TContext
+> => {
+  const mutationKey = ["adminLogin"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof adminLogin>>,
+    { data: BodyType<LoginBody> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return adminLogin(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type AdminLoginMutationResult = NonNullable<
+  Awaited<ReturnType<typeof adminLogin>>
+>;
+export type AdminLoginMutationBody = BodyType<LoginBody>;
+export type AdminLoginMutationError = ErrorType<ErrorResponse>;
+
+/**
+ * @summary Admin login
+ */
+export const useAdminLogin = <
+  TError = ErrorType<ErrorResponse>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof adminLogin>>,
+    TError,
+    { data: BodyType<LoginBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof adminLogin>>,
+  TError,
+  { data: BodyType<LoginBody> },
+  TContext
+> => {
+  return useMutation(getAdminLoginMutationOptions(options));
+};
+
+/**
+ * @summary Verify JWT token
+ */
+export const getVerifyTokenUrl = () => {
+  return `/api/auth/verify`;
+};
+
+export const verifyToken = async (
+  options?: RequestInit,
+): Promise<VerifyResponse> => {
+  return customFetch<VerifyResponse>(getVerifyTokenUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getVerifyTokenQueryKey = () => {
+  return [`/api/auth/verify`] as const;
+};
+
+export const getVerifyTokenQueryOptions = <
+  TData = Awaited<ReturnType<typeof verifyToken>>,
+  TError = ErrorType<ErrorResponse>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof verifyToken>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getVerifyTokenQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof verifyToken>>> = ({
+    signal,
+  }) => verifyToken({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof verifyToken>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type VerifyTokenQueryResult = NonNullable<
+  Awaited<ReturnType<typeof verifyToken>>
+>;
+export type VerifyTokenQueryError = ErrorType<ErrorResponse>;
+
+/**
+ * @summary Verify JWT token
+ */
+
+export function useVerifyToken<
+  TData = Awaited<ReturnType<typeof verifyToken>>,
+  TError = ErrorType<ErrorResponse>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof verifyToken>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getVerifyTokenQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
  * @summary List all appointments
  */
 export const getListAppointmentsUrl = () => {
@@ -186,7 +348,6 @@ export function useListAppointments<
 }
 
 /**
- * Submit a new appointment booking
  * @summary Create appointment
  */
 export const getCreateAppointmentUrl = () => {
@@ -360,7 +521,6 @@ export function useGetAppointment<
 }
 
 /**
- * Returns counts and breakdowns of appointment statuses
  * @summary Get appointment statistics summary
  */
 export const getGetAppointmentStatsUrl = () => {

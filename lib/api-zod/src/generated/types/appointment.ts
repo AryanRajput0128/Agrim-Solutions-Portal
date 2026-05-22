@@ -15,5 +15,7 @@ export interface Appointment {
   query: string;
   serviceType: string;
   status: AppointmentStatus;
+  preferredDate?: string;
+  preferredTime?: string;
   createdAt: Date;
 }

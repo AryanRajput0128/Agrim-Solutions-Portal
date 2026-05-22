@@ -10,6 +10,8 @@ export const appointmentsTable = pgTable("appointments", {
   query: text("query").notNull(),
   serviceType: text("service_type").notNull(),
   status: text("status").notNull().default("pending"),
+  preferredDate: text("preferred_date"),
+  preferredTime: text("preferred_time"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
@@ -23,6 +25,8 @@ export const insertAppointmentSchema = createInsertSchema(appointmentsTable).omi
   email: z.string().email(),
   query: z.string().min(5),
   serviceType: z.string().min(1),
+  preferredDate: z.string().optional(),
+  preferredTime: z.string().optional(),
 });
 
 export type InsertAppointment = z.infer<typeof insertAppointmentSchema>;

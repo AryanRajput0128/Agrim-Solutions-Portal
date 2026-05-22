@@ -9,6 +9,18 @@ export interface HealthStatus {
   status: string;
 }
 
+export interface LoginBody {
+  password: string;
+}
+
+export interface LoginResponse {
+  token: string;
+}
+
+export interface VerifyResponse {
+  valid: boolean;
+}
+
 export type AppointmentStatus =
   (typeof AppointmentStatus)[keyof typeof AppointmentStatus];
 
@@ -27,6 +39,8 @@ export interface Appointment {
   query: string;
   serviceType: string;
   status: AppointmentStatus;
+  preferredDate?: string;
+  preferredTime?: string;
   createdAt: string;
 }
 
@@ -39,6 +53,8 @@ export interface CreateAppointmentBody {
   /** @minLength 5 */
   query: string;
   serviceType: string;
+  preferredDate?: string;
+  preferredTime?: string;
 }
 
 export interface AppointmentStats {

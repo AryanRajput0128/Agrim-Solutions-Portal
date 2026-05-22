@@ -171,10 +171,18 @@ export function Layout({ children }: { children: React.ReactNode }) {
             <p className="text-primary-foreground/60 text-sm">
               &copy; {new Date().getFullYear()} Agrim Solutions. All rights reserved.
             </p>
-            <p className="text-primary-foreground/60 text-sm flex items-center">
-              <ShieldCheck className="h-4 w-4 mr-2" />
-              Authorized Property Registration Consultant
-            </p>
+            <div className="flex items-center gap-4">
+              <p className="text-primary-foreground/60 text-sm flex items-center">
+                <ShieldCheck className="h-4 w-4 mr-2" />
+                Authorized Property Registration Consultant
+              </p>
+              <Link
+                href="/admin-login"
+                className="text-primary-foreground/30 hover:text-primary-foreground/60 text-xs transition-colors"
+              >
+                Admin
+              </Link>
+            </div>
           </div>
         </div>
       </footer>

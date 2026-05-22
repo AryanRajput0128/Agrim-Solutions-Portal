@@ -24,12 +24,26 @@ import { useState } from "react";
 import { CheckCircle2, Loader2 } from "lucide-react";
 import { Link } from "wouter";
 
+const timeSlots = [
+  "9:00 AM", "9:30 AM",
+  "10:00 AM", "10:30 AM",
+  "11:00 AM", "11:30 AM",
+  "12:00 PM", "12:30 PM",
+  "1:00 PM", "1:30 PM",
+  "2:00 PM", "2:30 PM",
+  "3:00 PM", "3:30 PM",
+  "4:00 PM", "4:30 PM",
+  "5:00 PM",
+];
+
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   phone: z.string().min(10, "Valid 10-digit phone number required").max(15),
   email: z.string().email("Invalid email address").optional().or(z.literal("")),
   serviceType: z.string().min(1, "Please select a service type"),
   query: z.string().min(5, "Please provide some details about your work"),
+  preferredDate: z.string().optional(),
+  preferredTime: z.string().optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -55,12 +69,21 @@ export function BookingForm() {
       email: "",
       serviceType: "",
       query: "",
+      preferredDate: "",
+      preferredTime: "",
     },
   });
 
   function onSubmit(data: FormValues) {
     createAppointment.mutate(
-      { data },
+      {
+        data: {
+          ...data,
+          email: data.email || "",
+          preferredDate: data.preferredDate || undefined,
+          preferredTime: data.preferredTime || undefined,
+        },
+      },
       {
         onSuccess: () => {
           setIsSuccess(true);
@@ -102,6 +125,7 @@ export function BookingForm() {
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          {/* Name + Phone */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <FormField
               control={form.control}
@@ -131,6 +155,7 @@ export function BookingForm() {
             />
           </div>
 
+          {/* Email + Service */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <FormField
               control={form.control}
@@ -159,9 +184,7 @@ export function BookingForm() {
                     </FormControl>
                     <SelectContent>
                       {services.map((service) => (
-                        <SelectItem key={service} value={service}>
-                          {service}
-                        </SelectItem>
+                        <SelectItem key={service} value={service}>{service}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -171,6 +194,51 @@ export function BookingForm() {
             />
           </div>
 
+          {/* Preferred Date + Time */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <FormField
+              control={form.control}
+              name="preferredDate"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-foreground font-semibold">Preferred Date (Optional)</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="date"
+                      {...field}
+                      min={new Date().toISOString().split("T")[0]}
+                      className="bg-muted/50 border-muted-foreground/20 focus-visible:ring-secondary"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="preferredTime"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-foreground font-semibold">Preferred Time (Optional)</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger className="bg-muted/50 border-muted-foreground/20 focus:ring-secondary">
+                        <SelectValue placeholder="Select a time slot" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {timeSlots.map((slot) => (
+                        <SelectItem key={slot} value={slot}>{slot}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          {/* Query */}
           <FormField
             control={form.control}
             name="query"
@@ -178,10 +246,10 @@ export function BookingForm() {
               <FormItem>
                 <FormLabel className="text-foreground font-semibold">Work Details / Query *</FormLabel>
                 <FormControl>
-                  <Textarea 
-                    placeholder="Please briefly describe the property and what needs to be registered..." 
+                  <Textarea
+                    placeholder="Please briefly describe the property and what needs to be registered..."
                     className="min-h-[120px] resize-none bg-muted/50 border-muted-foreground/20 focus-visible:ring-secondary"
-                    {...field} 
+                    {...field}
                   />
                 </FormControl>
                 <FormMessage />
@@ -189,9 +257,9 @@ export function BookingForm() {
             )}
           />
 
-          <Button 
-            type="submit" 
-            size="lg" 
+          <Button
+            type="submit"
+            size="lg"
             className="w-full bg-secondary text-secondary-foreground hover:bg-secondary/90 font-bold text-lg h-14"
             disabled={createAppointment.isPending}
           >

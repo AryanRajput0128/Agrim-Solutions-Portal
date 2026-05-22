@@ -8,7 +8,6 @@
 import * as zod from "zod";
 
 /**
- * Returns server health status
  * @summary Health check
  */
 export const HealthCheckResponse = zod.object({
@@ -16,7 +15,24 @@ export const HealthCheckResponse = zod.object({
 });
 
 /**
- * Returns all submitted appointment bookings
+ * @summary Admin login
+ */
+export const AdminLoginBody = zod.object({
+  password: zod.string(),
+});
+
+export const AdminLoginResponse = zod.object({
+  token: zod.string(),
+});
+
+/**
+ * @summary Verify JWT token
+ */
+export const VerifyTokenResponse = zod.object({
+  valid: zod.boolean(),
+});
+
+/**
  * @summary List all appointments
  */
 export const ListAppointmentsResponseItem = zod.object({
@@ -27,12 +43,13 @@ export const ListAppointmentsResponseItem = zod.object({
   query: zod.string(),
   serviceType: zod.string(),
   status: zod.enum(["pending", "confirmed", "completed", "cancelled"]),
+  preferredDate: zod.string().optional(),
+  preferredTime: zod.string().optional(),
   createdAt: zod.coerce.date(),
 });
 export const ListAppointmentsResponse = zod.array(ListAppointmentsResponseItem);
 
 /**
- * Submit a new appointment booking
  * @summary Create appointment
  */
 export const createAppointmentBodyNameMin = 2;
@@ -47,6 +64,8 @@ export const CreateAppointmentBody = zod.object({
   email: zod.string().email(),
   query: zod.string().min(createAppointmentBodyQueryMin),
   serviceType: zod.string(),
+  preferredDate: zod.string().optional(),
+  preferredTime: zod.string().optional(),
 });
 
 /**
@@ -64,11 +83,12 @@ export const GetAppointmentResponse = zod.object({
   query: zod.string(),
   serviceType: zod.string(),
   status: zod.enum(["pending", "confirmed", "completed", "cancelled"]),
+  preferredDate: zod.string().optional(),
+  preferredTime: zod.string().optional(),
   createdAt: zod.coerce.date(),
 });
 
 /**
- * Returns counts and breakdowns of appointment statuses
  * @summary Get appointment statistics summary
  */
 export const GetAppointmentStatsResponse = zod.object({
